@@ -48,6 +48,7 @@ static void print_help() {
          << "-w <addr>   --gateway <addr>      gateway to use" << endl
          << "-w <addr>   --gateway <addr>      gateway to use" << endl
          << "-t <sec>    --timeout <sec>       dial timeout in seconds" << endl
+         << "-y <proxy>  --proxy <proxy>       sip proxy" << endl
          << endl;
 
     cerr << "The EBNF definition of the program syntax:" << endl
@@ -292,7 +293,8 @@ bool Manager::Init(PArgList &args) {
         "g-gatekeeper:"
         "w-gateway:"
         "t-timeout:"
-        "h-help:");
+        "h-help:"
+        "y-proxy:");
 
     if (args.HasOption('h')) {
         print_help();
@@ -345,7 +347,10 @@ bool Manager::Init(PArgList &args) {
             param.m_realm = args.GetOptionString('g');
 
             PString *aor = new PString("");
-            // sipep->SetProxy(args.GetOptionString('w'));
+            if (args.HasOption('y')) {
+                cout << "Registering proxy: " << args.GetOptionString('y') << endl;
+                sipep->SetProxy(args.GetOptionString('y'));
+            }
 
             if (!StartListener()) {
                 return false;
